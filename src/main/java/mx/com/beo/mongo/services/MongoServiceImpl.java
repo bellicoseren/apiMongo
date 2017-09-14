@@ -1,4 +1,4 @@
-package mx.com.beo.services;
+package mx.com.beo.mongo.services;
  
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,7 +17,8 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.WriteResult;
 
-import mx.com.beo.util.Conexion; 
+import mx.com.beo.mongo.util.Conexion;
+import mx.com.beo.mongo.util.Urls; 
 
 /**
  * Copyright (c) 2017 Nova Solution Systems S.A. de C.V. Mexico D.F. TodoSysotems los
@@ -36,11 +37,13 @@ public class MongoServiceImpl implements MongoService {
 
  
 	Conexion conexion=new Conexion();
+	
+	private static final String baseDatos=Urls.BASEDATOS_MONGO.getPath();
 
 	public WriteResult eliminar(String nombreColeccion, Map<String, Object> mapaDatosConsulta) {
 
 		MongoClient mongo = conexion.crearConexion();
-		DB db = mongo.getDB("Prueba");
+		DB db = mongo.getDB(baseDatos);
 		DBCollection coleccion = db.getCollection(nombreColeccion);
 
 		BasicDBObject objeto = new BasicDBObject();
@@ -59,7 +62,7 @@ public class MongoServiceImpl implements MongoService {
 			Map<String, Object> mapaDatosAModificar) {
 
 		MongoClient mongo = conexion.crearConexion();
-		DB db = mongo.getDB("Prueba");
+		DB db = mongo.getDB(baseDatos);
 		DBCollection coleccion = db.getCollection(nombreColeccion);
 
 		BasicDBObject objetoAModificar = new BasicDBObject();
@@ -86,9 +89,9 @@ public class MongoServiceImpl implements MongoService {
 	
 
 	public String inserta(String nombreColeccion, Map<String, Object> mapaDatosConsulta) {
-
+ 
 		MongoClient mongo = conexion.crearConexion();
-		DB db = mongo.getDB("Prueba");
+		DB db = mongo.getDB(baseDatos);
 		DBCollection coleccion = db.getCollection(nombreColeccion);
 
 		BasicDBObject objeto = new BasicDBObject();
@@ -107,7 +110,7 @@ public class MongoServiceImpl implements MongoService {
 	public Map<String, Object> consulta(String nombreColeccion) {
 
 		MongoClient mongo = conexion.crearConexion();
-		DB db = mongo.getDB("Prueba");
+		DB db = mongo.getDB(baseDatos);
 		DBCollection coleccion = db.getCollection(nombreColeccion);
 
 		BasicDBObject objeto = new BasicDBObject();
@@ -141,7 +144,7 @@ public class MongoServiceImpl implements MongoService {
 			List<String> datosAIgnorar) {
 
 		MongoClient mongo = conexion.crearConexion();
-		DB db = mongo.getDB("Prueba");
+		DB db = mongo.getDB(baseDatos);
 		DBCollection coleccion = db.getCollection(nombreColeccion);
 
 		BasicDBObject objeto = new BasicDBObject();
@@ -193,7 +196,7 @@ public class MongoServiceImpl implements MongoService {
 	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta) {
 
 		MongoClient mongo = conexion.crearConexion();
-		DB db = mongo.getDB("Prueba");
+		DB db = mongo.getDB(baseDatos);
 		DBCollection coleccion = db.getCollection(nombreColeccion);
 
 		BasicDBObject objeto = new BasicDBObject();

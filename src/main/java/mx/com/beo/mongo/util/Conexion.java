@@ -1,4 +1,4 @@
-package mx.com.beo.util;
+package mx.com.beo.mongo.util;
 
 import java.net.UnknownHostException;
 import com.mongodb.MongoClient;
@@ -21,11 +21,12 @@ public class Conexion {
 	public MongoClient crearConexion() {
 		MongoClient mongo = null;
 		try {
-			mongo = new MongoClient("172.17.0.2", 27017);
+			String host=Urls.HOST_MONGO.getPath();
+			int puerto=Integer.parseInt(Urls.PUERTO_MONGO.getPath());		
+			mongo = new MongoClient(host, puerto);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
-		}
-
+		} 
 		return mongo;
 	}
 

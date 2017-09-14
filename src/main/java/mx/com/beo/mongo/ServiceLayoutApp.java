@@ -1,4 +1,4 @@
-package mx.com.beo;
+package mx.com.beo.mongo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
