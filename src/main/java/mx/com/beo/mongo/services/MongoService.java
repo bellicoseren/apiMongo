@@ -1,4 +1,4 @@
-package mx.com.beo.services;
+package mx.com.beo.mongo.services;
  
 import java.util.List;
 import java.util.Map;

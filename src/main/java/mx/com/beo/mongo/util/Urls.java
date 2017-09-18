@@ -1,4 +1,4 @@
-package mx.com.beo.util;
+package mx.com.beo.mongo.util;
 
 /**
  * Copyright (c) 2017 Nova Solution Systems S.A. de C.V. Mexico D.F. Todos los
@@ -25,10 +25,11 @@ public enum Urls {
 	  * - BASEPATH
 	  */
 
-	ESB_ENVIO(System.getenv("PROTOCOLO") +"://"+System.getenv("HOSTNAME")+((System.getenv("PUERTO")!=null && !System.getenv("PUERTO").equals(""))?":"+System.getenv("PUERTO"):"")+(System.getenv("BASEPATH")!=null?System.getenv("BASEPATH"):"")+"/envioESB"),
+	HOST_MONGO(System.getenv("HOST_MONGO")),
+	PUERTO_MONGO(System.getenv("PUERTO_MONGO")),
+	BASEDATOS_MONGO(System.getenv("BASEDATOS_MONGO"))		
 ;
-
-
+ 
 	private String path;
 	 
 	private Urls(String path){
@@ -44,4 +45,3 @@ public enum Urls {
 	}
 
 }
-
