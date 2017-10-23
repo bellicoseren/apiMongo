@@ -124,8 +124,12 @@ public class MongoServiceImpl implements MongoService {
 			while (cursor.hasNext()) {
 				DBObject key = cursor.next();
 				Set<String> keyset = key.keySet();
-				for (String s : keyset) { 
-					mapaRespuesta.put(s, key.get(s));
+				for (String s : keyset) {
+					if(s.equalsIgnoreCase("_id")){
+						mapaRespuesta.put(s, key.get(s).toString());
+					}else{
+						mapaRespuesta.put(s, key.get(s));
+					};
 				}
 				contador++;
 				mapaRespuestaGeneral.put(contador + "", mapaRespuesta);
@@ -178,8 +182,13 @@ public class MongoServiceImpl implements MongoService {
 			while (cursor.hasNext()) {
 				DBObject key = cursor.next();
 				Set<String> keyset = key.keySet();
-				for (String s : keyset) { 
-					mapaRespuesta.put(s, key.get(s));
+				for (String s : keyset) {
+					if(s.equalsIgnoreCase("_id")){
+						mapaRespuesta.put(s, key.get(s).toString());
+					}else{
+						mapaRespuesta.put(s, key.get(s));
+					}
+					
 				}
 				contador++;
 				mapaRespuestaGeneral.put(contador + "", mapaRespuesta);
@@ -216,8 +225,12 @@ public class MongoServiceImpl implements MongoService {
 			while (cursor.hasNext()) {
 				DBObject key = cursor.next();
 				Set<String> keyset = key.keySet();
-				for (String s : keyset) { 
-					mapaRespuesta.put(s, key.get(s));
+				for (String s : keyset) {
+					if(s.equalsIgnoreCase("_id")){
+						mapaRespuesta.put(s, key.get(s).toString());
+					}else{
+						mapaRespuesta.put(s, key.get(s));
+					}
 				}
 				 
 				contador++;
