@@ -9,6 +9,7 @@ import com.mongodb.WriteResult;
  * derechos reservados.
  *
  * @author Reynaldo Ivan Martinez Lopez
+ * @author Edgar Alan Valdes Iglesias
  *
  *         ESTE SOFTWARE ES INFORMACIÓN CONFIDENCIAL. PROPIEDAD DE NOVA SOLUTION
  *         SYSTEMS. ESTA INFORMACIÓN NO DEBE SER DIVULGADA Y PUEDE SOLAMENTE SER
@@ -16,19 +17,20 @@ import com.mongodb.WriteResult;
  *         MISMA.
  */
 
-public abstract interface MongoService
+public interface MongoService
 {
-	public abstract WriteResult eliminar(String nombreColeccion, Map<String, Object> mapaDatosConsulta);
+	WriteResult eliminar(String nombreColeccion, Map<String, Object> mapaDatosConsulta);
 	
-	public abstract WriteResult modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> mapaDatosNuevos);
+    WriteResult modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> mapaDatosNuevos);
 	
-	public abstract String inserta(String nombreColeccion, Map<String, Object> mapaDatosConsulta);
+	String inserta(String nombreColeccion, Map<String, Object> mapaDatosConsulta);
 	 
-	public abstract Map<String, Object> consulta(String nombreColeccion);
+	Map<String, Object> consulta(String nombreColeccion);
 	
-	public abstract Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, List<String> datosAIgnorar);
+	Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, List<String> datosAIgnorar);
 	
-	public abstract Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta);
+	Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta);
 	
+	Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> mapaFormatoFechas);
 	 
 }
