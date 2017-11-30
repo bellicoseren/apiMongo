@@ -1,7 +1,11 @@
 package mx.com.beo.mongo.util;
 
 import java.net.UnknownHostException;
+import java.util.Arrays;
+
 import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 
 /**
  * Copyright (c) 2017 Nova Solution Systems S.A. de C.V. Mexico D.F. Todos los
@@ -20,14 +24,14 @@ public class Conexion {
 	
 	public MongoClient crearConexion() {
 		MongoClient mongo = null;
-		try {
-			String host=Urls.HOST_MONGO.getPath();
-			int puerto=Integer.parseInt(Urls.PUERTO_MONGO.getPath());		
-			mongo = new MongoClient(host, puerto);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} 
+		String host=Urls.HOST_MONGO.getPath();
+		String usuario=Urls.ADMIN_USER_MONGO.getPath();
+		String pass=Urls.ADMIN_PASS_MONGO.getPath();
+		MongoCredential mongoCredential = MongoCredential.createScramSha1Credential("admin", usuario,pass.toCharArray());
+		int puerto=Integer.parseInt(Urls.PUERTO_MONGO.getPath());
+		mongo = new MongoClient(new ServerAddress(host, puerto),Arrays.asList(mongoCredential)); 
 		return mongo;
 	}
 
 }
+

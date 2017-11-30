@@ -34,3 +34,4 @@ public interface MongoService
 	Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> mapaFormatoFechas);
 	 
 }
+

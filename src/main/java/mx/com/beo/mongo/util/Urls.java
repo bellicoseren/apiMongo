@@ -27,7 +27,9 @@ public enum Urls {
 
 	HOST_MONGO(System.getenv("HOST_MONGO")),
 	PUERTO_MONGO(System.getenv("PUERTO_MONGO")),
-	BASEDATOS_MONGO(System.getenv("BASEDATOS_MONGO"))		
+	BASEDATOS_MONGO(System.getenv("BASEDATOS_MONGO")),
+	ADMIN_USER_MONGO(System.getenv("ADMIN_USER_MONGO")),
+	ADMIN_PASS_MONGO(System.getenv("ADMIN_PASS_MONGO"))
 ;
  
 	private String path;
@@ -45,3 +47,4 @@ public enum Urls {
 	}
 
 }
+
