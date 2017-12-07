@@ -68,7 +68,7 @@ Para utilizar la libreria como dependencia es necesario agregar al **pom.xml** d
       <dependency>
          <groupId>mx.com.beo</groupId>
          <artifactId>apiMongo</artifactId>
-         <version>${redis-component.version}</version>
+         <version>${mongo-component.version}</version>
       </dependency>
 ```
 
@@ -79,4 +79,21 @@ Para utilizar la libreria como dependencia es necesario agregar al **pom.xml** d
         <url>http://200.39.24.141:8081/repository/GrupoMiddleware</url>
       </repository>
    </repositories>  
+```
+
+
+## Variables de ambiente
+
+Previo a la ejecucion del programa es necesario configurar variables de ambiente
+
+Configuración de parámetros para la API de MongoDB
+
+```
+USER_MONGO=<Usuario de mongo>
+PASSWORD_USER_MONGO=<Contraseña de mongo>
+SOURCE_USER_MONGO=<Source del usuario>
+BASEDATOS_MONGO=<Nombre de la base de datos>
+HOST_MONGO=<Dirección del host de mongo>
+COLECCION_MONGO=configuracionImportacion
+PUERTO_MONGO=<Puerto de mongo>
 ```

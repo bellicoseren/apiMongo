@@ -25,9 +25,10 @@ public class Conexion {
 	public MongoClient crearConexion() {
 		MongoClient mongo = null;
 		String host=Urls.HOST_MONGO.getPath();
-		String usuario=Urls.ADMIN_USER_MONGO.getPath();
-		String pass=Urls.ADMIN_PASS_MONGO.getPath();
-		MongoCredential mongoCredential = MongoCredential.createScramSha1Credential("admin", usuario,pass.toCharArray());
+		String usuario=Urls.USER_MONGO.getPath();
+		String pass=Urls.PASSWORD_USER_MONGO.getPath();
+		String source=Urls.SOURCE_USER_MONGO.getPath();
+		MongoCredential mongoCredential = MongoCredential.createScramSha1Credential(usuario,source,pass.toCharArray());
 		int puerto=Integer.parseInt(Urls.PUERTO_MONGO.getPath());
 		mongo = new MongoClient(new ServerAddress(host, puerto),Arrays.asList(mongoCredential)); 
 		return mongo;
