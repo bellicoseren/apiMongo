@@ -105,6 +105,10 @@ public class MongoServiceImpl implements MongoService {
 	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> formatoFechas) {
 		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,null,formatoFechas);
 	}
+
+	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> formatoFechas,List<String> datosAIgnorar) {
+		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,datosAIgnorar,formatoFechas);
+	}	
 	
 	private Map<String, Object> createResponseMap(DBCollection coleccion, Map<String, Object> mapaDatosConsulta, List<String> datosAIgnorar, Map<String, Object> formatoFechas){
 		BasicDBObject objetoDB = new BasicDBObject();
