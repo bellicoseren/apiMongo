@@ -46,7 +46,7 @@ public class MongoServiceImpl implements MongoService {
 	private MongoClient mongo;
 	private static final String baseDatos=Urls.BASEDATOS_MONGO.getPath();
 
-	public WriteResult eliminar(String nombreColeccion, Map<String, Object> mapaDatosConsulta) {
+	public Integer eliminar(String nombreColeccion, Map<String, Object> mapaDatosConsulta) {
 		DBCollection coleccion = getCollection(nombreColeccion);
 		BasicDBObject objeto = new BasicDBObject();
 		Iterator<String> it = mapaDatosConsulta.keySet().iterator();
@@ -55,10 +55,10 @@ public class MongoServiceImpl implements MongoService {
 			objeto.put(key.toString(), mapaDatosConsulta.get(key));
 		}
 		WriteResult respuesta = coleccion.remove(objeto);
-		return respuesta;
+		return respuesta.getN();
 	}
 
-	public WriteResult modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta,Map<String, Object> mapaDatosAModificar) {
+	public Integer modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta,Map<String, Object> mapaDatosAModificar) {
 		DBCollection coleccion = getCollection(nombreColeccion);
 		BasicDBObject objetoAModificar = new BasicDBObject();
 		BasicDBObject MapaConsulta = new BasicDBObject();
@@ -73,11 +73,11 @@ public class MongoServiceImpl implements MongoService {
 			objetoAModificar.put(key.toString(), mapaDatosAModificar.get(key));
 		}
 		WriteResult respuesta = coleccion.update(MapaConsulta, objetoAModificar);
-		return respuesta;
+		return respuesta.getN();
 
 	}
 
-	public String inserta(String nombreColeccion, Map<String, Object> mapaDatosConsulta) {
+	public Boolean inserta(String nombreColeccion, Map<String, Object> mapaDatosConsulta) {
 		DBCollection coleccion = getCollection(nombreColeccion);
 		BasicDBObject objeto = new BasicDBObject();
 		Iterator<String> it = mapaDatosConsulta.keySet().iterator();
@@ -85,8 +85,8 @@ public class MongoServiceImpl implements MongoService {
 			Object key = it.next();
 			objeto.put(key.toString(), mapaDatosConsulta.get(key));
 		}
-		coleccion.insert(objeto);
-		return "OK";
+		WriteResult respuesta = coleccion.insert(objeto);
+		return respuesta.wasAcknowledged() ? true : false;
 	}
 
 	public Map<String, Object> consulta(String nombreColeccion) {
@@ -112,11 +112,16 @@ public class MongoServiceImpl implements MongoService {
 		int contador = 0;
 		DBCursor cursor;
 		for (Entry entry : mapaDatosConsulta.entrySet()) {
-			objetoDB.put(entry.getKey().toString(), entry.getValue());
+			if(entry.getKey().toString().equals("id")) {
+				ObjectId id= new ObjectId(entry.getKey().toString());
+				objetoDB.put("_id", id);
+			}else {	
+				objetoDB.put(entry.getKey().toString(), entry.getValue());
+			}
 		}
 		try {
 			//Ignore Data for Search
-			cursor = (datosAIgnorar != null)? coleccion.find(objetoDB,getIgnoreData(datosAIgnorar)): coleccion.find(objetoDB);
+			cursor = (datosAIgnorar != null) ? coleccion.find(objetoDB,getIgnoreData(datosAIgnorar)): coleccion.find(objetoDB);
 			while (cursor.hasNext()) {
 				Map<String, Object> mapaRespuesta = new HashMap<String, Object>();
 				DBObject key = cursor.next();	
