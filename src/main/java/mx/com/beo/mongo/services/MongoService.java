@@ -19,11 +19,11 @@ import com.mongodb.WriteResult;
 
 public interface MongoService
 {
-	WriteResult eliminar(String nombreColeccion, Map<String, Object> mapaDatosConsulta);
+	Integer eliminar(String nombreColeccion, Map<String, Object> mapaDatosConsulta);
 	
-    WriteResult modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> mapaDatosNuevos);
+    Integer modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> mapaDatosNuevos);
 	
-	String inserta(String nombreColeccion, Map<String, Object> mapaDatosConsulta);
+	Boolean inserta(String nombreColeccion, Map<String, Object> mapaDatosConsulta);
 	 
 	Map<String, Object> consulta(String nombreColeccion);
 	
