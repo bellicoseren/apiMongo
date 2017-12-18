@@ -58,10 +58,14 @@ public class MongoServiceImpl implements MongoService {
 		return respuesta.getN();
 	}
 
-	public Integer modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta,Map<String, Object> mapaDatosAModificar) {
+	public Integer modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta,
+			Map<String, Object> mapaDatosAModificar,boolean permitirUpsert) {
+		
+		
 		DBCollection coleccion = getCollection(nombreColeccion);
 		BasicDBObject objetoAModificar = new BasicDBObject();
 		BasicDBObject MapaConsulta = new BasicDBObject();
+		
 		Iterator<String> itConsulta = mapaDatosConsulta.keySet().iterator();
 		while (itConsulta.hasNext()) {
 			Object key = itConsulta.next();
@@ -70,11 +74,12 @@ public class MongoServiceImpl implements MongoService {
 		Iterator<String> it = mapaDatosAModificar.keySet().iterator();
 		while (it.hasNext()) {
 			Object key = it.next();
-			objetoAModificar.put(key.toString(), mapaDatosAModificar.get(key));
+			if(!permitirUpsert) MapaConsulta.append(key.toString(), new BasicDBObject("$exists", true));
+			objetoAModificar.append("$set", new BasicDBObject().append(key.toString(), mapaDatosAModificar.get(key)));
 		}
-		WriteResult respuesta = coleccion.update(MapaConsulta, objetoAModificar);
+		WriteResult respuesta = coleccion.update(MapaConsulta, objetoAModificar,false,false);
+		System.out.println(respuesta);
 		return respuesta.getN();
-
 	}
 
 	public Boolean inserta(String nombreColeccion, Map<String, Object> mapaDatosConsulta) {
