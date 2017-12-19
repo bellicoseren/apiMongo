@@ -21,7 +21,7 @@ public interface MongoService
 {
 	Integer eliminar(String nombreColeccion, Map<String, Object> mapaDatosConsulta);
 	
-    Integer modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> mapaDatosNuevos);
+    Integer modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> mapaDatosNuevos,boolean permitirUpsert);
 	
 	Boolean inserta(String nombreColeccion, Map<String, Object> mapaDatosConsulta);
 	 

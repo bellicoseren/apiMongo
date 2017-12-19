@@ -20,7 +20,7 @@ Para que pueda ser utilizado como una dependencia, es necesario instalar el proy
     <server>
       <id>nexus-repository</id>
       <username>middleware</username>
-      <password>m1dll3w4r3</password>
+      <password>m1ddl3w4r3</password>
     </server>
 ```
 2.- Agregar el siguiente plugin al **pom.xml**

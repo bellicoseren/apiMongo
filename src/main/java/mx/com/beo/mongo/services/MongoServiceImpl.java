@@ -1,14 +1,12 @@
 package mx.com.beo.mongo.services;
  
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TimeZone;
 
 import org.bson.types.ObjectId;
@@ -22,6 +20,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.WriteResult;
+
 
 import mx.com.beo.mongo.util.Conexion;
 import mx.com.beo.mongo.util.Urls; 
@@ -57,11 +56,30 @@ public class MongoServiceImpl implements MongoService {
 		WriteResult respuesta = coleccion.remove(objeto);
 		return respuesta.getN();
 	}
+	
+	
+	/**
+	 * Modifica un documento existente en la colección especificada.
+	 * <p>
+	 * @param  &ensp;<b>nombreColeccion</b>  nombre de la colección donde se realizarán las modificaciones.
+	 * @param  &ensp;<b>mapaDatosConsulta</b> mapa que contiene los campos utilizados como referencia para la búsqueda.
+	 * @param  &ensp;<b>mapaDatosAModificar</b> mapa con los datos que serán modificados.
+	 * @param  &ensp;<b>permitirUpsert</b> Si se permiten o no upserts.
+	 * <p>
+	 * En caso de ser <i>true</i> un nuevo parámetro puede ser insertado si no se satisfacen los parámetros de búsqueda.
+	 * <p>
+	 * En caso de ser <i>false</i> sólo se actualizan los valores existentes.
+	 * @return &ensp;<b>Integer</b> Valor entero con el número de documentos que fueron modificados.
+	 */
 
-	public Integer modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta,Map<String, Object> mapaDatosAModificar) {
+	public Integer modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta,
+			Map<String, Object> mapaDatosAModificar,boolean permitirUpsert) {
+		
+		
 		DBCollection coleccion = getCollection(nombreColeccion);
 		BasicDBObject objetoAModificar = new BasicDBObject();
 		BasicDBObject MapaConsulta = new BasicDBObject();
+		
 		Iterator<String> itConsulta = mapaDatosConsulta.keySet().iterator();
 		while (itConsulta.hasNext()) {
 			Object key = itConsulta.next();
@@ -70,11 +88,12 @@ public class MongoServiceImpl implements MongoService {
 		Iterator<String> it = mapaDatosAModificar.keySet().iterator();
 		while (it.hasNext()) {
 			Object key = it.next();
-			objetoAModificar.put(key.toString(), mapaDatosAModificar.get(key));
+			if(!permitirUpsert) MapaConsulta.append(key.toString(), new BasicDBObject("$exists", true));
+			objetoAModificar.append("$set", new BasicDBObject().append(key.toString(), mapaDatosAModificar.get(key)));
 		}
-		WriteResult respuesta = coleccion.update(MapaConsulta, objetoAModificar);
+		WriteResult respuesta = coleccion.update(MapaConsulta, objetoAModificar,false,true);
+		System.out.println(respuesta);
 		return respuesta.getN();
-
 	}
 
 	public Boolean inserta(String nombreColeccion, Map<String, Object> mapaDatosConsulta) {
