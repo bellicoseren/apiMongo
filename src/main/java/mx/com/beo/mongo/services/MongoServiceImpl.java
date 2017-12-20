@@ -89,9 +89,11 @@ public class MongoServiceImpl implements MongoService {
 		while (it.hasNext()) {
 			Object key = it.next();
 			if(!permitirUpsert) MapaConsulta.append(key.toString(), new BasicDBObject("$exists", true));
-			objetoAModificar.append("$set", new BasicDBObject().append(key.toString(), mapaDatosAModificar.get(key)));
+			objetoAModificar.append(key.toString(), mapaDatosAModificar.get(key));
 		}
-		WriteResult respuesta = coleccion.update(MapaConsulta, objetoAModificar,false,true);
+		BasicDBObject setQuery = new BasicDBObject();
+		setQuery.append("$set", objetoAModificar);
+		WriteResult respuesta = coleccion.update(MapaConsulta, setQuery,false,true);
 		System.out.println(respuesta);
 		return respuesta.getN();
 	}
@@ -136,7 +138,7 @@ public class MongoServiceImpl implements MongoService {
 		DBCursor cursor;
 		for (Entry entry : mapaDatosConsulta.entrySet()) {
 			if(entry.getKey().toString().equals("id")) {
-				ObjectId id= new ObjectId(entry.getKey().toString());
+				ObjectId id= new ObjectId(entry.getValue().toString());
 				objetoDB.put("_id", id);
 			}else {	
 				objetoDB.put(entry.getKey().toString(), entry.getValue());
