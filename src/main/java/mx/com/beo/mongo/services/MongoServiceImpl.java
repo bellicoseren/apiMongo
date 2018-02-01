@@ -66,15 +66,14 @@ public class MongoServiceImpl implements MongoService {
 	 * @param  &ensp;<b>mapaDatosAModificar</b> mapa con los datos que serán modificados.
 	 * @param  &ensp;<b>permitirUpsert</b> Si se permiten o no upserts.
 	 * <p>
-	 * En caso de ser <i>true</i> un nuevo parámetro puede ser insertado si no se satisfacen los parámetros de búsqueda.
+	 * En caso de ser <i>true</i> un nuevo parámetro puede ser agregado al documento.
 	 * <p>
-	 * En caso de ser <i>false</i> sólo se actualizan los valores existentes.
+	 * En caso de ser <i>false</i> sólo se actualizará si los campos existen.
 	 * @return &ensp;<b>Integer</b> Valor entero con el número de documentos que fueron modificados.
 	 */
 
 	public Integer modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta,
 			Map<String, Object> mapaDatosAModificar,boolean permitirUpsert) {
-		
 		
 		DBCollection coleccion = getCollection(nombreColeccion);
 		BasicDBObject objetoAModificar = new BasicDBObject();
@@ -83,18 +82,23 @@ public class MongoServiceImpl implements MongoService {
 		Iterator<String> itConsulta = mapaDatosConsulta.keySet().iterator();
 		while (itConsulta.hasNext()) {
 			Object key = itConsulta.next();
-			MapaConsulta.put(key.toString(), mapaDatosConsulta.get(key));
+			MapaConsulta.put(key.toString(), new BasicDBObject("$eq", mapaDatosConsulta.get(key)));
 		}
 		Iterator<String> it = mapaDatosAModificar.keySet().iterator();
 		while (it.hasNext()) {
 			Object key = it.next();
-			if(!permitirUpsert) MapaConsulta.append(key.toString(), new BasicDBObject("$exists", true));
+			if (!permitirUpsert) {
+				if (MapaConsulta.containsField(key.toString())) {
+					MapaConsulta.append(key.toString(), new BasicDBObject("$exists", true).append("$eq",mapaDatosConsulta.get(key.toString())));
+				} else {
+					MapaConsulta.append(key.toString(), new BasicDBObject("$exists", true));
+				}
+			}
 			objetoAModificar.append(key.toString(), mapaDatosAModificar.get(key));
 		}
 		BasicDBObject setQuery = new BasicDBObject();
 		setQuery.append("$set", objetoAModificar);
 		WriteResult respuesta = coleccion.update(MapaConsulta, setQuery,false,true);
-		System.out.println(respuesta);
 		return respuesta.getN();
 	}
 
