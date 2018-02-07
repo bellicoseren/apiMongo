@@ -3,6 +3,7 @@ package mx.com.beo.mongo.services;
 import java.util.List;
 import java.util.Map;
 
+import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 /**
  * Copyright (c) 2017 Nova Solution Systems S.A. de C.V. Mexico D.F. Todos los
@@ -29,11 +30,19 @@ public interface MongoService
 	
 	Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, List<String> datosAIgnorar);
 	
+	Map<String, Object> consulta(String nombreColeccion, DBObject query, List<String> datosAIgnorar);
+	
 	Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta);
+	
+	Map<String, Object> consulta(String nombreColeccion, DBObject query);
 	
 	Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> mapaFormatoFechas);
 	
+	Map<String, Object> consulta(String nombreColeccion, DBObject query, Map<String, Object> mapaFormatoFechas);
+	
 	Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> mapaFormatoFechas, List<String> datosAIgnorar);
+	
+	Map<String, Object> consulta(String nombreColeccion, DBObject query, Map<String, Object> mapaFormatoFechas, List<String> datosAIgnorar);
 	 
 }
 

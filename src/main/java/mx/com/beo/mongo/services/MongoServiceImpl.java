@@ -19,6 +19,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.QueryBuilder;
 import com.mongodb.WriteResult;
 
 
@@ -116,36 +117,57 @@ public class MongoServiceImpl implements MongoService {
 
 	public Map<String, Object> consulta(String nombreColeccion) {
 		Map<String, Object> consulta = new HashMap<String, Object>();
-		return createResponseMap(getCollection(nombreColeccion),consulta,null,null);
+		return createResponseMap(getCollection(nombreColeccion),consulta,null,null,null);
 	}
 
 	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta,List<String> datosAIgnorar) {
-		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,datosAIgnorar,null);
+		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,null,datosAIgnorar,null);
 	}
+
+	public Map<String, Object> consulta(String nombreColeccion, DBObject query,List<String> datosAIgnorar) {
+		return createResponseMap(getCollection(nombreColeccion),null,query,datosAIgnorar,null);
+	}	
 
 	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta) {
-		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,null,null);
+		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,null,null,null);
 	}
+
+	public Map<String, Object> consulta(String nombreColeccion, DBObject query) {
+		return createResponseMap(getCollection(nombreColeccion),null,query,null,null);
+	}	
 
 	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> formatoFechas) {
-		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,null,formatoFechas);
+		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,null,null,formatoFechas);
 	}
 
+	public Map<String, Object> consulta(String nombreColeccion, DBObject query, Map<String, Object> formatoFechas) {
+		return createResponseMap(getCollection(nombreColeccion),null,query,null,formatoFechas);
+	}	
+
 	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> formatoFechas,List<String> datosAIgnorar) {
-		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,datosAIgnorar,formatoFechas);
+		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,null,datosAIgnorar,formatoFechas);
+	}
+
+	public Map<String, Object> consulta(String nombreColeccion, DBObject query, Map<String, Object> formatoFechas,List<String> datosAIgnorar) {
+		return createResponseMap(getCollection(nombreColeccion),null,query,datosAIgnorar,formatoFechas);
 	}	
 	
-	private Map<String, Object> createResponseMap(DBCollection coleccion, Map<String, Object> mapaDatosConsulta, List<String> datosAIgnorar, Map<String, Object> formatoFechas){
-		BasicDBObject objetoDB = new BasicDBObject();
+	private Map<String, Object> createResponseMap(DBCollection coleccion, Map<String, Object> mapaDatosConsulta,DBObject query, List<String> datosAIgnorar, Map<String, Object> formatoFechas){
 		Map<String, Object> mapaRespuestaGeneral = new HashMap<String, Object>();
 		int contador = 0;
 		DBCursor cursor;
-		for (Entry entry : mapaDatosConsulta.entrySet()) {
-			if(entry.getKey().toString().equals("id")) {
-				ObjectId id= new ObjectId(entry.getValue().toString());
-				objetoDB.put("_id", id);
-			}else {	
-				objetoDB.put(entry.getKey().toString(), entry.getValue());
+		DBObject objetoDB = null;
+		if(query != null)
+			objetoDB = query;
+		else {
+			objetoDB = new BasicDBObject();
+			for (Entry entry : mapaDatosConsulta.entrySet()) {
+				if(entry.getKey().toString().equals("id")) {
+					ObjectId id= new ObjectId(entry.getValue().toString());
+					objetoDB.put("_id", id);
+				}else {	
+					objetoDB.put(entry.getKey().toString(), entry.getValue());
+				}
 			}
 		}
 		try {
