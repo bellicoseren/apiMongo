@@ -75,4 +75,5 @@ BASEDATOS_MONGO=<Nombre de la base de datos>
 HOST_MONGO=<Dirección del host de mongo>
 COLECCION_MONGO=<Coleccion>
 PUERTO_MONGO=<Puerto de mongo>
+TIME_OUT=<Tiempo de espera de conexion>
 ```

@@ -19,11 +19,15 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoTimeoutException;
 import com.mongodb.QueryBuilder;
 import com.mongodb.WriteResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import mx.com.beo.mongo.util.Conexion;
+import mx.com.beo.mongo.util.MongoConectionException;
 import mx.com.beo.mongo.util.Urls; 
 
 /**
@@ -45,8 +49,10 @@ public class MongoServiceImpl implements MongoService {
 	private Conexion conexion;
 	private MongoClient mongo;
 	private static final String baseDatos=Urls.BASEDATOS_MONGO.getPath();
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(MongoServiceImpl.class);
 
-	public Integer eliminar(String nombreColeccion, Map<String, Object> mapaDatosConsulta) {
+	public Integer eliminar(String nombreColeccion, Map<String, Object> mapaDatosConsulta) throws MongoConectionException {
 		DBCollection coleccion = getCollection(nombreColeccion);
 		BasicDBObject objeto = new BasicDBObject();
 		Iterator<String> it = mapaDatosConsulta.keySet().iterator();
@@ -71,10 +77,11 @@ public class MongoServiceImpl implements MongoService {
 	 * <p>
 	 * En caso de ser <i>false</i> sólo se actualizará si los campos existen.
 	 * @return &ensp;<b>Integer</b> Valor entero con el número de documentos que fueron modificados.
+	 * @throws MongoConectionException 
 	 */
 
 	public Integer modificacion(String nombreColeccion, Map<String, Object> mapaDatosConsulta,
-			Map<String, Object> mapaDatosAModificar,boolean permitirUpsert) {
+			Map<String, Object> mapaDatosAModificar,boolean permitirUpsert) throws MongoConectionException {
 		
 		DBCollection coleccion = getCollection(nombreColeccion);
 		BasicDBObject objetoAModificar = new BasicDBObject();
@@ -103,7 +110,7 @@ public class MongoServiceImpl implements MongoService {
 		return respuesta.getN();
 	}
 
-	public Boolean inserta(String nombreColeccion, Map<String, Object> mapaDatosConsulta) {
+	public Boolean inserta(String nombreColeccion, Map<String, Object> mapaDatosConsulta) throws MongoConectionException {
 		DBCollection coleccion = getCollection(nombreColeccion);
 		BasicDBObject objeto = new BasicDBObject();
 		Iterator<String> it = mapaDatosConsulta.keySet().iterator();
@@ -115,40 +122,40 @@ public class MongoServiceImpl implements MongoService {
 		return respuesta.wasAcknowledged() ? true : false;
 	}
 
-	public Map<String, Object> consulta(String nombreColeccion) {
+	public Map<String, Object> consulta(String nombreColeccion) throws MongoConectionException {
 		Map<String, Object> consulta = new HashMap<String, Object>();
 		return createResponseMap(getCollection(nombreColeccion),consulta,null,null,null);
 	}
 
-	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta,List<String> datosAIgnorar) {
+	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta,List<String> datosAIgnorar) throws MongoConectionException {
 		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,null,datosAIgnorar,null);
 	}
 
-	public Map<String, Object> consulta(String nombreColeccion, DBObject query,List<String> datosAIgnorar) {
+	public Map<String, Object> consulta(String nombreColeccion, DBObject query,List<String> datosAIgnorar) throws MongoConectionException {
 		return createResponseMap(getCollection(nombreColeccion),null,query,datosAIgnorar,null);
 	}	
 
-	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta) {
+	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta) throws MongoConectionException {
 		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,null,null,null);
 	}
 
-	public Map<String, Object> consulta(String nombreColeccion, DBObject query) {
+	public Map<String, Object> consulta(String nombreColeccion, DBObject query) throws MongoConectionException {
 		return createResponseMap(getCollection(nombreColeccion),null,query,null,null);
 	}	
 
-	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> formatoFechas) {
+	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> formatoFechas) throws MongoConectionException {
 		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,null,null,formatoFechas);
 	}
 
-	public Map<String, Object> consulta(String nombreColeccion, DBObject query, Map<String, Object> formatoFechas) {
+	public Map<String, Object> consulta(String nombreColeccion, DBObject query, Map<String, Object> formatoFechas) throws MongoConectionException {
 		return createResponseMap(getCollection(nombreColeccion),null,query,null,formatoFechas);
 	}	
 
-	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> formatoFechas,List<String> datosAIgnorar) {
+	public Map<String, Object> consulta(String nombreColeccion, Map<String, Object> mapaDatosConsulta, Map<String, Object> formatoFechas,List<String> datosAIgnorar) throws MongoConectionException {
 		return createResponseMap(getCollection(nombreColeccion),mapaDatosConsulta,null,datosAIgnorar,formatoFechas);
 	}
 
-	public Map<String, Object> consulta(String nombreColeccion, DBObject query, Map<String, Object> formatoFechas,List<String> datosAIgnorar) {
+	public Map<String, Object> consulta(String nombreColeccion, DBObject query, Map<String, Object> formatoFechas,List<String> datosAIgnorar) throws MongoConectionException {
 		return createResponseMap(getCollection(nombreColeccion),null,query,datosAIgnorar,formatoFechas);
 	}	
 	
@@ -184,6 +191,8 @@ public class MongoServiceImpl implements MongoService {
 				contador++;
 				mapaRespuestaGeneral.put(contador + "", mapaRespuesta);
 			}
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Error: " + e.getMessage());
@@ -221,10 +230,23 @@ public class MongoServiceImpl implements MongoService {
 		}
 	}	
 	
-	private DBCollection getCollection (String nombreColeccion) {
-		MongoClient mongoClient = getMongoClient();
-		DB db = mongoClient.getDB(baseDatos);
-		return db.getCollection(nombreColeccion);		
+	private DBCollection getCollection(String nombreColeccion) throws MongoConectionException {
+		DBCollection dbCollectiondb = null;
+		try {
+			MongoClient mongoClient = getMongoClient();
+			DB db = mongoClient.getDB(baseDatos);
+			dbCollectiondb = db.getCollection(nombreColeccion);
+			
+			//valida conexion
+			db.getCollection(nombreColeccion).findOne();
+
+		} catch (MongoTimeoutException e) {
+			LOGGER.error("Error conexion con Mongo" , e);
+			throw new MongoConectionException("Error conexion con Mongo");
+		} catch (Exception e) {
+			LOGGER.error("Error al generar la coleccion" , e);
+		}
+		return dbCollectiondb;
 	}
 	
 	public synchronized MongoClient getMongoClient(){
