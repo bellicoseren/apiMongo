@@ -34,7 +34,6 @@ public class Conexion {
 		MongoCredential mongoCredential = MongoCredential.createScramSha1Credential(usuario,source,pass.toCharArray());
 		Builder mongoOptions = MongoClientOptions.builder().serverSelectionTimeout((System.getenv("TIME_OUT") == null
 				? serverSelectionTimeout : Integer.valueOf(System.getenv("TIME_OUT"))));
-		
 		int puerto=Integer.parseInt(Urls.PUERTO_MONGO.getPath());
 		mongo = new MongoClient(new ServerAddress(host, puerto),Arrays.asList(mongoCredential), mongoOptions.build());
 		

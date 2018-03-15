@@ -25,12 +25,12 @@ public enum Urls {
 	  * - BASEPATH
 	  */
 
-	HOST_MONGO(System.getenv("HOST_MONGO")),
-	PUERTO_MONGO(System.getenv("PUERTO_MONGO")),
-	BASEDATOS_MONGO(System.getenv("BASEDATOS_MONGO")),
-	USER_MONGO(System.getenv("USER_MONGO")),
-	PASSWORD_USER_MONGO(System.getenv("PASSWORD_USER_MONGO")),
-	SOURCE_USER_MONGO(System.getenv("SOURCE_USER_MONGO"))
+	HOST_MONGO(System.getenv(Constantes.HOST_MONGO)),
+	PUERTO_MONGO(System.getenv(Constantes.PUERTO_MONGO)),
+	BASEDATOS_MONGO(System.getenv(Constantes.BASEDATOS_MONGO)),
+	USER_MONGO(System.getenv(Constantes.USER_MONGO)),
+	PASSWORD_USER_MONGO(System.getenv(Constantes.CONTRASENIA_USER_MONGO)),
+	SOURCE_USER_MONGO(System.getenv(Constantes.SOURCE_USER_MONGO))
 ;
  
 	private String path;
@@ -42,10 +42,7 @@ public enum Urls {
 	public String getPath() {
 		return path;
 	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
+ 
 
 }
 

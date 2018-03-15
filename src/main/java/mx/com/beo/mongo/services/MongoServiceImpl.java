@@ -20,15 +20,14 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoTimeoutException;
-import com.mongodb.QueryBuilder;
 import com.mongodb.WriteResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mx.com.beo.mongo.util.Conexion;
-import mx.com.beo.mongo.util.MongoConectionException;
-import mx.com.beo.mongo.util.Urls; 
+import mx.com.beo.mongo.util.Constantes;
+import mx.com.beo.mongo.util.MongoConectionException; 
 
 /**
  * Copyright (c) 2017 Nova Solution Systems S.A. de C.V. Mexico D.F. TodoSysotems los
@@ -48,8 +47,7 @@ public class MongoServiceImpl implements MongoService {
 
 	private Conexion conexion;
 	private MongoClient mongo;
-	private static final String baseDatos=Urls.BASEDATOS_MONGO.getPath();
-	
+	 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MongoServiceImpl.class);
 
 	public Integer eliminar(String nombreColeccion, Map<String, Object> mapaDatosConsulta) throws MongoConectionException {
@@ -85,28 +83,28 @@ public class MongoServiceImpl implements MongoService {
 		
 		DBCollection coleccion = getCollection(nombreColeccion);
 		BasicDBObject objetoAModificar = new BasicDBObject();
-		BasicDBObject MapaConsulta = new BasicDBObject();
+		BasicDBObject basicDBObject = new BasicDBObject();
 		
 		Iterator<String> itConsulta = mapaDatosConsulta.keySet().iterator();
 		while (itConsulta.hasNext()) {
 			Object key = itConsulta.next();
-			MapaConsulta.put(key.toString(), new BasicDBObject("$eq", mapaDatosConsulta.get(key)));
+			basicDBObject.put(key.toString(), new BasicDBObject("$eq", mapaDatosConsulta.get(key)));
 		}
 		Iterator<String> it = mapaDatosAModificar.keySet().iterator();
 		while (it.hasNext()) {
 			Object key = it.next();
 			if (!permitirUpsert) {
-				if (MapaConsulta.containsField(key.toString())) {
-					MapaConsulta.append(key.toString(), new BasicDBObject("$exists", true).append("$eq",mapaDatosConsulta.get(key.toString())));
+				if (basicDBObject.containsField(key.toString())) {
+					basicDBObject.append(key.toString(), new BasicDBObject("$exists", true).append("$eq",mapaDatosConsulta.get(key.toString())));
 				} else {
-					MapaConsulta.append(key.toString(), new BasicDBObject("$exists", true));
+					basicDBObject.append(key.toString(), new BasicDBObject("$exists", true));
 				}
 			}
 			objetoAModificar.append(key.toString(), mapaDatosAModificar.get(key));
 		}
 		BasicDBObject setQuery = new BasicDBObject();
 		setQuery.append("$set", objetoAModificar);
-		WriteResult respuesta = coleccion.update(MapaConsulta, setQuery,false,true);
+		WriteResult respuesta = coleccion.update(basicDBObject, setQuery,false,true);
 		return respuesta.getN();
 	}
 
@@ -123,7 +121,7 @@ public class MongoServiceImpl implements MongoService {
 	}
 
 	public Map<String, Object> consulta(String nombreColeccion) throws MongoConectionException {
-		Map<String, Object> consulta = new HashMap<String, Object>();
+		Map<String, Object> consulta = new HashMap<>();
 		return createResponseMap(getCollection(nombreColeccion),consulta,null,null,null);
 	}
 
@@ -159,8 +157,9 @@ public class MongoServiceImpl implements MongoService {
 		return createResponseMap(getCollection(nombreColeccion),null,query,datosAIgnorar,formatoFechas);
 	}	
 	
+	@SuppressWarnings("unchecked")
 	private Map<String, Object> createResponseMap(DBCollection coleccion, Map<String, Object> mapaDatosConsulta,DBObject query, List<String> datosAIgnorar, Map<String, Object> formatoFechas){
-		Map<String, Object> mapaRespuestaGeneral = new HashMap<String, Object>();
+		Map<String, Object> mapaRespuestaGeneral = new HashMap<>();
 		int contador = 0;
 		DBCursor cursor;
 		DBObject objetoDB = null;
@@ -169,9 +168,9 @@ public class MongoServiceImpl implements MongoService {
 		else {
 			objetoDB = new BasicDBObject();
 			for (Entry entry : mapaDatosConsulta.entrySet()) {
-				if(entry.getKey().toString().equals("id")) {
+				if(entry.getKey().toString().equals(Constantes.ID)) {
 					ObjectId id= new ObjectId(entry.getValue().toString());
-					objetoDB.put("_id", id);
+					objetoDB.put(Constantes.ID_ID, id);
 				}else {	
 					objetoDB.put(entry.getKey().toString(), entry.getValue());
 				}
@@ -180,10 +179,9 @@ public class MongoServiceImpl implements MongoService {
 		try {
 			//Ignore Data for Search
 			cursor = (datosAIgnorar != null) ? coleccion.find(objetoDB,getIgnoreData(datosAIgnorar)): coleccion.find(objetoDB);
-			while (cursor.hasNext()) {
-				Map<String, Object> mapaRespuesta = new HashMap<String, Object>();
+			while (cursor.hasNext()) { 
 				DBObject key = cursor.next();	
-				mapaRespuesta = (Map<String, Object>) key.toMap();
+				Map<String, Object> mapaRespuesta = (Map<String, Object>) key.toMap();
 				parseIdToString(mapaRespuesta,key);
 				//FormatDates
 				if(formatoFechas!=null)
@@ -193,16 +191,15 @@ public class MongoServiceImpl implements MongoService {
 			}
 			
 			
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Error: " + e.getMessage());
+		} catch (Exception e) { 
+			LOGGER.error("Error: " , e.getMessage());
 		}
 		return mapaRespuestaGeneral;
 	}
 	
 	private BasicDBObject getIgnoreData (List<String> datosAIgnorar) {
 		BasicDBObject objetoDB = new BasicDBObject();
-		Map<String, Object> mapaDatosAIgnorar = new HashMap<String, Object>();
+		Map<String, Object> mapaDatosAIgnorar = new HashMap<>();
 		for (String dato : datosAIgnorar) {
 			mapaDatosAIgnorar.put(dato, 0);
 		}
@@ -212,39 +209,38 @@ public class MongoServiceImpl implements MongoService {
 		return objetoDB;
 	}
 	
-	private void parseIdToString(Map<String, Object> _map,DBObject key) {
-		if(_map.containsKey("_id")) {
-			_map.put("id", key.get("_id").toString());
-			_map.remove("_id");
+	private void parseIdToString(Map<String, Object> mapaParse,DBObject key) {
+		if(mapaParse.containsKey(Constantes.ID_ID)) {
+			mapaParse.put(Constantes.ID, key.get(Constantes.ID_ID).toString());
+			mapaParse.remove(Constantes.ID_ID);
 		}
 	}
 
-	private void formatDates(Map<String, Object> _map,Map<String, Object> dates) {
+	private void formatDates(Map<String, Object> mapaFormato ,Map<String, Object> dates) {
 		for (Entry date : dates.entrySet()) {
-			if(_map.containsKey(date.getKey()) && _map.get(date.getKey()) instanceof Date){
-				Date _date = (Date)_map.get(date.getKey());
+			if(mapaFormato.containsKey(date.getKey()) && mapaFormato.get(date.getKey()) instanceof Date){
+				Date date1 = (Date)mapaFormato.get(date.getKey());
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(date.getValue().toString());
 				simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-				_map.put(date.getKey().toString(), simpleDateFormat.format(_date));					
+				mapaFormato.put(date.getKey().toString(), simpleDateFormat.format(date1));					
 			}
 		}
 	}	
 	
+	@SuppressWarnings("deprecation")
 	private DBCollection getCollection(String nombreColeccion) throws MongoConectionException {
 		DBCollection dbCollectiondb = null;
 		try {
 			MongoClient mongoClient = getMongoClient();
-			DB db = mongoClient.getDB(baseDatos);
+			DB db = mongoClient.getDB(Constantes.BASEDATOS);
 			dbCollectiondb = db.getCollection(nombreColeccion);
 			
 			//valida conexion
 			db.getCollection(nombreColeccion).findOne();
 
 		} catch (MongoTimeoutException e) {
-			LOGGER.error("Error conexion con Mongo" , e);
+			LOGGER.error("Error conexion con Mongo" , e.getMessage());
 			throw new MongoConectionException("Error conexion con Mongo");
-		} catch (Exception e) {
-			LOGGER.error("Error al generar la coleccion" , e);
 		}
 		return dbCollectiondb;
 	}

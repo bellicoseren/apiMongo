@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.mongodb.DBObject;
-import com.mongodb.WriteResult;
 
 import mx.com.beo.mongo.util.MongoConectionException;
 /**
