@@ -26,6 +26,7 @@ public class Conexion {
 	public MongoClient crearConexion() {
 		MongoClient mongo = null;
 		String host=Urls.HOST_MONGO.getPath();
+		String host1=Urls.HOST_MONGO1.getPath();
 		String usuario=Urls.USER_MONGO.getPath();
 		String pass=Urls.PASSWORD_USER_MONGO.getPath();
 		String source=Urls.SOURCE_USER_MONGO.getPath();
@@ -35,7 +36,12 @@ public class Conexion {
 		Builder mongoOptions = MongoClientOptions.builder().serverSelectionTimeout((System.getenv("TIME_OUT") == null
 				? serverSelectionTimeout : Integer.valueOf(System.getenv("TIME_OUT"))));
 		int puerto=Integer.parseInt(Urls.PUERTO_MONGO.getPath());
-		mongo = new MongoClient(new ServerAddress(host, puerto),Arrays.asList(mongoCredential), mongoOptions.build());
+		int puerto1=Integer.parseInt(Urls.PUERTO_MONGO1.getPath());
+ 
+		mongo = new MongoClient(
+				   Arrays.asList(new ServerAddress(host, puerto),
+				                 new ServerAddress(host1, puerto1))
+				   ,Arrays.asList(mongoCredential), mongoOptions.build());
 		
 		return mongo;
 	}
