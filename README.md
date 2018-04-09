@@ -73,15 +73,7 @@ PASSWORD_USER_MONGO=<Contraseña de mongo>
 SOURCE_USER_MONGO=<Source del usuario>
 BASEDATOS_MONGO=<Nombre de la base de datos>
 HOST_MONGO=<Dirección del host de mongo>
-HOST_MONGO1=<Dirección del host de mongo>
 COLECCION_MONGO=<Coleccion>
 PUERTO_MONGO=<Puerto de mongo>
-PUERTO_MONGO1=<Puerto de mongo>
 TIME_OUT=<Tiempo de espera de conexion>
-``` 
-
-en este cado solo estoy usando 2 pods.
-
-
-
-
+```
