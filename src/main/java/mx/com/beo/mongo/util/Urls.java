@@ -26,14 +26,11 @@ public enum Urls {
 	  */
 
 	HOST_MONGO(System.getenv(Constantes.HOST_MONGO)),
-	HOST_MONGO1(System.getenv(Constantes.HOST_MONGO1)),
 	PUERTO_MONGO(System.getenv(Constantes.PUERTO_MONGO)),
-	PUERTO_MONGO1(System.getenv(Constantes.PUERTO_MONGO1)),
 	BASEDATOS_MONGO(System.getenv(Constantes.BASEDATOS_MONGO)),
 	USER_MONGO(System.getenv(Constantes.USER_MONGO)),
 	PASSWORD_USER_MONGO(System.getenv(Constantes.CONTRASENIA_USER_MONGO)),
-	SOURCE_USER_MONGO(System.getenv(Constantes.SOURCE_USER_MONGO)), 
-	NUMERO_PODS(System.getenv(Constantes.NUMERO_PODS))
+	SOURCE_USER_MONGO(System.getenv(Constantes.SOURCE_USER_MONGO))
 ;
  
 	private String path;
