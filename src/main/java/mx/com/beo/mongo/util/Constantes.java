@@ -1,16 +1,6 @@
 package mx.com.beo.mongo.util;
 
-/**
- * Copyright (c) 2017 Nova Solution Systems S.A. de C.V. Mexico D.F. Todos los
- * derechos reservados.
- * 
- * @author Reynaldo Ivan Martinez Lopez
- *
- *         ESTE SOFTWARE ES INFORMACIÓN CONFIDENCIAL. PROPIEDAD DE NOVA SOLUTION
- *         SYSTEMS. ESTA INFORMACIÓN NO DEBE SER DIVULGADA Y PUEDE SOLAMENTE SER
- *         UTILIZADA DE ACUERDO CON LOS TÉRMINOS DETERMINADOS POR LA EMPRESA SÍ
- *         MISMA.
- */
+ 
 
 
 public class Constantes {
