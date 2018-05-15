@@ -29,18 +29,7 @@ import mx.com.beo.mongo.util.Conexion;
 import mx.com.beo.mongo.util.Constantes;
 import mx.com.beo.mongo.util.MongoConectionException; 
 
-/**
- * Copyright (c) 2017 Nova Solution Systems S.A. de C.V. Mexico D.F. TodoSysotems los
- * derechos reservados.
- *
- * @author Reynaldo Ivan Martinez Lopez
- * @author Edgar Alan Valdes Iglesias
- *
- *         ESTE SOFTWARE ES INFORMACIÓN CONFIDENCIAL. PROPIEDAD DE NOVA SOLUTION
- *         SYSTEMS. ESTA INFORMACIÓN NO DEBE SER DIVULGADA Y PUEDE SOLAMENTE SER
- *         UTILIZADA DE ACUERDO CON LOS TÉRMINOS DETERMINADOS POR LA EMPRESA SÍ
- *         MISMA.
- */
+ 
 @Repository
 @Service
 public class MongoServiceImpl implements MongoService {
