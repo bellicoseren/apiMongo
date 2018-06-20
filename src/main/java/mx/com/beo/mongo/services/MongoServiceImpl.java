@@ -1,6 +1,10 @@
 package mx.com.beo.mongo.services;
  
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -101,10 +105,16 @@ public class MongoServiceImpl implements MongoService {
 		DBCollection coleccion = getCollection(nombreColeccion);
 		BasicDBObject objeto = new BasicDBObject();
 		Iterator<String> it = mapaDatosConsulta.keySet().iterator();
+		formatDatesMongo(mapaDatosConsulta, objeto);
+		
 		while (it.hasNext()) {
 			Object key = it.next();
-			objeto.put(key.toString(), mapaDatosConsulta.get(key));
+			
+			if(!(mapaDatosConsulta.get(key) instanceof Date)){
+				objeto.put(key.toString(), mapaDatosConsulta.get(key));
+			}
 		}
+		
 		WriteResult respuesta = coleccion.insert(objeto);
 		return respuesta.wasAcknowledged() ? true : false;
 	}
@@ -206,15 +216,31 @@ public class MongoServiceImpl implements MongoService {
 	}
 
 	private void formatDates(Map<String, Object> mapaFormato ,Map<String, Object> dates) {
+		LOGGER.info("mapaFormato {}", mapaFormato);
 		for (Entry date : dates.entrySet()) {
 			if(mapaFormato.containsKey(date.getKey()) && mapaFormato.get(date.getKey()) instanceof Date){
+				LOGGER.info("mapaFormato.get(date.getKey()) {}", mapaFormato.get(date.getKey()));
 				Date date1 = (Date)mapaFormato.get(date.getKey());
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(date.getValue().toString());
-				simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-				mapaFormato.put(date.getKey().toString(), simpleDateFormat.format(date1));					
+				LOGGER.info("simpleDateFormat.format(date1) {}", simpleDateFormat.format(date1));
+				mapaFormato.put(date.getKey().toString(), simpleDateFormat.format(date1));
 			}
 		}
 	}	
+
+	private void formatDatesMongo(Map<String, Object> mapaFormato, BasicDBObject objeto) {		
+		Map<String, Object> dates = new HashMap<>();
+		dates.put(Constantes.FECHA, Constantes.FECHA_FORMATO_LARGO);
+		for (Entry date : dates.entrySet()) {
+			if(mapaFormato.containsKey(date.getKey()) && mapaFormato.get(date.getKey()) instanceof Date){
+                Date dateV = (Date)mapaFormato.get(date.getKey());
+                TimeZone tz = TimeZone.getDefault();
+                Date ret = new Date(dateV.getTime() - tz.getRawOffset());
+                Date dstDate = new Date(ret.getTime() - (tz.getDSTSavings()*11));
+                objeto.put(date.getKey().toString(), dstDate);
+			}
+		}
+	}
 	
 	@SuppressWarnings("deprecation")
 	private DBCollection getCollection(String nombreColeccion) throws MongoConectionException {

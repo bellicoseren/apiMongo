@@ -45,7 +45,7 @@
     <distributionManagement>
 		<repository>
 			<id>nexus-repository</id>
-			<url>http://200.39.24.141:8081/repository/ADMiddleware/</url>
+			<url>http://nexus.multivaloresgf.local:8081/repository/maven-releases/</url>
 		</repository>
 	</distributionManagement>
 </project>
