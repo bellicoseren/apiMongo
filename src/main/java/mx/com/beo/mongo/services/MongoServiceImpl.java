@@ -1,10 +1,6 @@
 package mx.com.beo.mongo.services;
  
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -178,19 +174,18 @@ public class MongoServiceImpl implements MongoService {
 		try {
 			//Ignore Data for Search
 			cursor = (datosAIgnorar != null) ? coleccion.find(objetoDB,getIgnoreData(datosAIgnorar)): coleccion.find(objetoDB);
-			LOGGER.info("cursorMongo: {}", cursor);
 			while (cursor.hasNext()) { 
-				DBObject key = cursor.next();	
+				DBObject key = cursor.next();
 				Map<String, Object> mapaRespuesta = (Map<String, Object>) key.toMap();
+				formatDatesMongo(mapaRespuesta);
 				parseIdToString(mapaRespuesta,key);
+				
 				//FormatDates
 				if(formatoFechas!=null)
 					formatDates(mapaRespuesta,formatoFechas);
 				contador++;
 				mapaRespuestaGeneral.put(contador + "", mapaRespuesta);
 			}
-			
-			
 		} catch (Exception e) { 
 			LOGGER.error("Error: " , e.getMessage());
 		}
@@ -217,28 +212,35 @@ public class MongoServiceImpl implements MongoService {
 	}
 
 	private void formatDates(Map<String, Object> mapaFormato ,Map<String, Object> dates) {
-		LOGGER.info("mapaFormato {}", mapaFormato);
 		for (Entry date : dates.entrySet()) {
 			if(mapaFormato.containsKey(date.getKey()) && mapaFormato.get(date.getKey()) instanceof Date){
-				LOGGER.info("mapaFormato.get(date.getKey()) {}", mapaFormato.get(date.getKey()));
 				Date date1 = (Date)mapaFormato.get(date.getKey());
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(date.getValue().toString());
-				LOGGER.info("simpleDateFormat.format(date1) {}", simpleDateFormat.format(date1));
 				mapaFormato.put(date.getKey().toString(), simpleDateFormat.format(date1));
 			}
 		}
 	}	
 
-	private void formatDatesMongo(Map<String, Object> mapaFormato, BasicDBObject objeto) {		
-		Map<String, Object> dates = new HashMap<>();
-		dates.put(Constantes.FECHA, Constantes.FECHA_FORMATO_LARGO);
-		for (Entry date : dates.entrySet()) {
-			if(mapaFormato.containsKey(date.getKey()) && mapaFormato.get(date.getKey()) instanceof Date){
-                Date dateV = (Date)mapaFormato.get(date.getKey());
+	private void formatDatesMongo(Map<String, Object> mapaRespuesta) {		
+		for (Entry respuesta : mapaRespuesta.entrySet()) {
+			if(mapaRespuesta.get(respuesta.getKey()) instanceof Date){
+                Date dateV = (Date)mapaRespuesta.get(respuesta.getKey());
+                TimeZone tz = TimeZone.getDefault();
+                Date ret = new Date(dateV.getTime() - tz.getRawOffset());
+                Date dstDate = new Date(ret.getTime() - tz.getDSTSavings());
+                mapaRespuesta.put(respuesta.getKey().toString(), dstDate);
+			}
+		}
+	}
+	
+	private void formatDatesMongo(Map<String, Object> mapaRespuesta, BasicDBObject objeto) {		
+		for (Entry respuesta : mapaRespuesta.entrySet()) {
+			if(mapaRespuesta.get(respuesta.getKey()) instanceof Date){
+                Date dateV = (Date)mapaRespuesta.get(respuesta.getKey());
                 TimeZone tz = TimeZone.getDefault();
                 Date ret = new Date(dateV.getTime() - tz.getRawOffset());
                 Date dstDate = new Date(ret.getTime() - (tz.getDSTSavings()*11));
-                objeto.put(date.getKey().toString(), dstDate);
+                objeto.put(respuesta.getKey().toString(), dstDate);
 			}
 		}
 	}
