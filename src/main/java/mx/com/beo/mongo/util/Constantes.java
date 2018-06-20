@@ -18,8 +18,4 @@ public class Constantes {
 	public static final String  ID = "id"; 
 	public static final String  ID_ID = "_id"; 
 	public static final String BASEDATOS=Urls.BASEDATOS_MONGO.getPath();
-	
-	public static final String FECHA = "fecha";
-	public static final String FECHA_FORMATO_LARGO = "dd-MM-yyyy'T'HH:mm:ss";
-	
 }
