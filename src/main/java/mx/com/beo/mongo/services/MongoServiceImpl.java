@@ -178,6 +178,7 @@ public class MongoServiceImpl implements MongoService {
 		try {
 			//Ignore Data for Search
 			cursor = (datosAIgnorar != null) ? coleccion.find(objetoDB,getIgnoreData(datosAIgnorar)): coleccion.find(objetoDB);
+			LOGGER.info("cursorMongo: {}", cursor);
 			while (cursor.hasNext()) { 
 				DBObject key = cursor.next();	
 				Map<String, Object> mapaRespuesta = (Map<String, Object>) key.toMap();
