@@ -187,8 +187,9 @@ public class MongoServiceImpl implements MongoService {
 				mapaRespuestaGeneral.put(contador + "", mapaRespuesta);
 			}
 		} catch (Exception e) { 
-			LOGGER.error("Error: " , e.getMessage());
+			LOGGER.error("Error en apiMongo: {}" , e.getMessage());
 		}
+
 		return mapaRespuestaGeneral;
 	}
 	
@@ -257,7 +258,7 @@ public class MongoServiceImpl implements MongoService {
 			db.getCollection(nombreColeccion).findOne();
 
 		} catch (MongoTimeoutException e) {
-			LOGGER.error("Error conexion con Mongo" , e.getMessage());
+			LOGGER.error("Error conexion con Mongo: {}" , e.getMessage());
 			throw new MongoConectionException("Error conexion con Mongo");
 		}
 		return dbCollectiondb;
